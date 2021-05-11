@@ -15,9 +15,9 @@
   - Search and random buttons are disabled until the UI is done updating.
   - If the given subreddit is not found or it simply has no imgur content the app will give an error.
 
-    Known bugs: None at the moment.
+    **Known bugs**: None at the moment.
 
-    Todo: 
+    **Todo: **
       - More styling for buttons and title bar
       - Image download as service
       - Dropdown menu with sorting possibilities for rating (newest, top) and time (day, week, year, all)
