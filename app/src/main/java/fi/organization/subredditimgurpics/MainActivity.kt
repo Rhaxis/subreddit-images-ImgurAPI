@@ -27,7 +27,7 @@ import kotlin.concurrent.thread
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Content(var link: String? = null, var type: String? = null, var in_gallery: Boolean? = false, var title: String? = null)
+data class Content(var link: String? = null, var type: String? = null, var in_gallery: Boolean? = false, var title: String? = null, val height: Int? = null, val width: Int? = null)
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -36,12 +36,12 @@ data class Response(var data: MutableList<Content>? = null)
 
 class MainActivity : AppCompatActivity() {
     lateinit var searchText: EditText
-    lateinit var searchButton : Button
-    lateinit var searchRandom : Button
+    lateinit var searchButton: Button
+    lateinit var searchRandom: Button
     lateinit var container: LinearLayout
     lateinit var scrollingView: ScrollView
-    lateinit var notFound : TextView
-    lateinit var spinner : Spinner
+    lateinit var notFound: TextView
+    lateinit var spinner: Spinner
     var containerHeight = 200
     var customTitle = "Imgur content from subreddit"
     val itemsToShow = 50
@@ -83,20 +83,18 @@ class MainActivity : AppCompatActivity() {
     fun getImages(view: View, inputText: String) {
         clear()
         customTitle = "/r/$inputText"
-        var contentList : MutableList<Content>? = null
         downloadUrlAsync(this, inputText) {
-            contentList =  parseJson(it)
-            updateUI(contentList)
+            var contentList = parseJson(it)
+            updateUI(contentList) { it1 ->
+                buttonsEnabled(it1)
+            }
         }
-
-
     }
 
-    fun parseJson(string: String?) : MutableList<Content>? {
+    fun parseJson(string: String?): MutableList<Content>? {
         val mp = ObjectMapper()
         val myObject: Response = mp.readValue(string, Response::class.java)
-        Log.d("TEST", "${myObject.data?.size}")
-        if(myObject.data?.size!! >= 1) {
+        if (myObject.data?.size!! >= 1) {
             redditFound(true)
         } else {
             redditFound(false)
@@ -104,16 +102,16 @@ class MainActivity : AppCompatActivity() {
         return myObject.data?.filter { it.in_gallery == false }?.take(itemsToShow)?.toMutableList()
     }
 
-    fun httpConnection(inputText: String) : String? {
+    fun httpConnection(inputText: String): String? {
         val client = OkHttpClient()
         val url = URL("https://api.imgur.com/3/gallery/r/$inputText")
         val request = Request.Builder()
-            .url(url)
-            .addHeader("Authorization", "Client-ID $clientID")
-            .get()
-            .build()
+                .url(url)
+                .addHeader("Authorization", "Client-ID $clientID")
+                .get()
+                .build()
         val response = client.newCall(request).execute()
-        return  response.body?.string()
+        return response.body?.string()
     }
 
     private fun downloadUrlAsync(activity: Activity, s: String, callback: (result: String?) -> Unit) {
@@ -126,90 +124,94 @@ class MainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun updateUI(contentList: MutableList<Content>?) {
+    private fun updateUI(contentList: MutableList<Content>?, callback: (result: Boolean) -> Unit) {
+        var done = 0
+        Log.d("TEST", "$done")
+        Log.d("TEST", "${contentList?.size}")
         contentList?.forEach {
             val url = it.link
             val type = it.type
             val title = it.title
-            if(url != null && type?.contains("image") == true) {
+            val height = it.height
+            val width = it.width
+
+            if (url != null && type?.contains("image") == true) {
                 thread() {
                     var textView = TextView(this)
                     var imageView = ImageView(this)
-                    textViewAttributes(textView, title)
-                    imageView.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-                    (imageView.layoutParams as LinearLayout.LayoutParams).setMargins(0, 20, 0, 200)
-                    imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
-
-                    imageView.adjustViewBounds = true
-                    imageView.isClickable = true
-                    imageView.setOnClickListener {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-                    }
-
-                    if(type.contains("gif") == true) {
+                    textViewParameters(textView, title)
+                    imageViewParameters(imageView, url)
+                    if (type.contains("gif")) {
                         runOnUiThread {
                             Glide.with(this).load(url).into(imageView)
                         }
                     } else {
-                        var myBitmap : Bitmap? = null
+                        var myBitmap: Bitmap? = null
                         myBitmap?.recycle()
                         val input: InputStream = URL(url).openStream()
-                        val o = BitmapFactory.Options()
-                        o.inSampleSize = 2
-
-                        myBitmap = BitmapFactory.decodeStream(input, null, o)
-                        if(myBitmap != null) {
-                            if(myBitmap.height > 2000 || myBitmap.width > 2000) {
-                                val resized = Bitmap.createScaledBitmap(myBitmap, (myBitmap.width * 0.1).toInt(), (myBitmap.height * 0.1).toInt(), true)
-                                imageView.setImageBitmap(resized)
-                                input.close()
-
+                        if (height != null && width != null) {
+                            if (height > 5000 || width > 5000) {
+                                val o = BitmapFactory.Options()
+                                o.inSampleSize = 14
+                                myBitmap = BitmapFactory.decodeStream(input, null, o)
+                                imageView.setImageBitmap(myBitmap)
                             }
-                            else if(myBitmap.height > 1500 || myBitmap.width > 1500) {
-                                val resized = Bitmap.createScaledBitmap(myBitmap, (myBitmap.width * 0.2).toInt(), (myBitmap.height * 0.2).toInt(), true)
-                                imageView.setImageBitmap(resized)
-                                input.close()
-
+                            else if (height > 4000 || width > 4000) {
+                                val o = BitmapFactory.Options()
+                                o.inSampleSize = 8
+                                myBitmap = BitmapFactory.decodeStream(input, null, o)
+                                imageView.setImageBitmap(myBitmap)
                             }
-                            else if(myBitmap.height > 900 || myBitmap.width > 900) {
-                                val resized = Bitmap.createScaledBitmap(myBitmap, (myBitmap.width * 0.5).toInt(), (myBitmap.height * 0.5).toInt(), true)
-                                imageView.setImageBitmap(resized)
-                                input.close()
+                            else if (height > 3000 || width > 3000) {
+                                val o = BitmapFactory.Options()
+                                o.inSampleSize = 3
+                                myBitmap = BitmapFactory.decodeStream(input, null, o)
+                                imageView.setImageBitmap(myBitmap)
+                            }
+                            else if (height > 2000 || width > 2000) {
+                                val o = BitmapFactory.Options()
+                                o.inSampleSize = 2
+                                myBitmap = BitmapFactory.decodeStream(input, null, o)
+                                imageView.setImageBitmap(myBitmap)
 
-                            }else {
-                                input.close()
+                            } else {
+                                myBitmap = BitmapFactory.decodeStream(input)
                                 imageView.setImageBitmap(myBitmap)
                             }
                         }
-
-
                     }
                     runOnUiThread {
                         this.container.addView(textView)
                         this.container.addView(imageView)
+                        done++
+                        if(done == contentList.size) {
+                            callback(true)
+                        }
                     }
                 }
             }
 
-            if(url != null && type?.contains("video") == true) {
+            if (url != null && type?.contains("video") == true) {
                 var videoView = VideoView(this)
                 val textView = TextView(this)
-                textViewAttributes(textView)
+                textViewParameters(textView)
                 videoView.setVideoURI(Uri.parse(url))
                 videoView.setOnPreparedListener { video ->
                     video.setVolume(0.0F, 0.0F)
                     video.start()
                 }
-
                 videoView.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
                 this.container.addView(textView)
                 this.container.addView(videoView)
+                done++
+                if(done == contentList.size) {
+                    callback(true)
+                }
             }
         }
-
         scrollingView.fullScroll((ScrollView.FOCUS_UP))
-        buttonsEnabled(true)
     }
+
 
     fun randomReddit(): String {
         val randomReddit = listOf("javascript", "java", "machinelearning", "howtohack", "dogs", "cats", "birds", "corgi")
@@ -233,15 +235,28 @@ class MainActivity : AppCompatActivity() {
         } else {
             notFound.visibility = View.VISIBLE
             title = "Imgur content from subreddit"
+            buttonsEnabled(true)
         }
         searchText.setText("")
     }
 
-    fun textViewAttributes(textView: TextView, title: String? = null) {
+    fun textViewParameters(textView: TextView, title: String? = null) {
         textView.typeface = Typeface.DEFAULT_BOLD;
         textView.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         textView.gravity = 1
         textView.setTextColor(Color.parseColor("#FFFFFF"))
         textView.text = title
+    }
+
+    fun imageViewParameters(imageView: ImageView, url : String) {
+        imageView.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        (imageView.layoutParams as LinearLayout.LayoutParams).setMargins(0, 20, 0, 200)
+        imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
+
+        imageView.adjustViewBounds = true
+        imageView.isClickable = true
+        imageView.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        }
     }
 }
