@@ -6,7 +6,7 @@
 | Topic            | Mobile application that shows 50 latest Imgur pictures from a given subreddit. User can also choose a random subreddit and sort pictures. Done by using Imgur API |
 | Target           | Android/Kotlin                                                                                                                                                                                                                                                              |
 
-Release 1: 2021-05-12 features
+**Release 1: 2021-05-12 features**
 
 
   - User can type any subreddit name (for example "cats", "gifs", "animals") and the app will fetch 50 newest imgur images, gifs and videos from that subreddit.
@@ -15,12 +15,12 @@ Release 1: 2021-05-12 features
   - Search and random buttons are disabled until the UI is done updating.
   - If the given subreddit is not found or it simply has no imgur content the app will give an error.
 
-  Known bugs: None at the moment.
+    Known bugs: None at the moment.
 
-  Todo: 
-    - More styling for buttons and title bar
-    - Image download as service
-    - Dropdown menu with sorting possibilities for rating (newest, top) and time (day, week, year, all)
-    - Any other suggestions?
+    Todo: 
+      - More styling for buttons and title bar
+      - Image download as service
+      - Dropdown menu with sorting possibilities for rating (newest, top) and time (day, week, year, all)
+      - Any other suggestions?
 
 
