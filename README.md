@@ -17,7 +17,7 @@
 
     **Known bugs**: None at the moment.
 
-    **Todo: **
+    **Todo**:
       - More styling for buttons and title bar
       - Image download as service
       - Dropdown menu with sorting possibilities for rating (newest, top) and time (day, week, year, all)
