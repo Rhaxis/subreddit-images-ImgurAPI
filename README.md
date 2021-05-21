@@ -23,7 +23,7 @@
 **Release 2: 2021-05-21 features**
   
   
-  **Screencast:** https://www.youtube.com/watch?v=6D_UjYa9N_U
+    **Screencast:** https://www.youtube.com/watch?v=6D_UjYa9N_U
   
   - Added a dropdown menu where user can choose how many items are shown at a time.
   - Refactored code
