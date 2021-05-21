@@ -16,10 +16,10 @@
   - If the given subreddit is not found or it simply has no imgur content the app will give an error.
 
     **Known bugs**: None at the moment.
-
-
-
   
+  
+  
+    
 **Release 2: 2021-05-21 features**
   
   
