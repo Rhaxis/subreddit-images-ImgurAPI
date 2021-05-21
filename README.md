@@ -17,10 +17,13 @@
 
     **Known bugs**: None at the moment.
 
-    **Todo**:
-      - More styling for buttons and title bar
-      - Image download as service
-      - Dropdown menu with sorting possibilities for rating (newest, top) and time (day, week, year, all)
-      - Any other suggestions?
+  
+**Release 2: 2021-05-21 features**
+  
+  **Screencast:** https://www.youtube.com/watch?v=6D_UjYa9N_U
+  - Added a dropdown menu where user can choose how many items are shown at a time.
+  - Refactored code
+  - Added comments
+  - Improved visual style of the app
 
-
+  **Known bugs**: App has no known bugs
