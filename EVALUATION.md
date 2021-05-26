@@ -16,3 +16,5 @@ Joskus haun jälkeen napit lakkaavat toimimasta todella pitkäksi aikaa, README 
 Mitään muita Bugeja tai ongelmia en kohdannut sovellusta testattaessa
 
 Tiivistettynä, lopputulos on todella helppokäyttöinen ja simppeli sovellus, joka on dokumentoitu hyvin README-tiedostossa ja koodin sisällä. Se tekee kaiken mitä sanookin tekevänsä ja sovelluksesta olisi varmasti hyötyä redditin käyttäjälle, joka haluaa vain katsella kuvia.
+
+Arvosana: 3, Sovellus on toimiva ja siinä on toteutettu kaikki ilmoitetut toiminnallisuudet. Ohjelman käyttäminen on helppoa ja Ulkoasu on selkeä. Koodi on hyvin siistiä ja hyvin kommentoitua.
